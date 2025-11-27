@@ -61,30 +61,30 @@ const checkUser = (user) => {
     return userCache.entries(user);
 }
 
-const getLatestCommits = async (result) => {
-    if (result === undefined) {
-        return "No recent commits from this user"
-    };
+const getLatestCommits = async (url) => {
     try {
-        const response = await fetch(`${result.repo.url}/commits`);
+        const response = await fetch(`${url}/commits`);
         if (!response.ok) {
            console.error(`GitHub API error: ${response.status}`);
         }
         const commitList = await response.json();
+
         if (commitList) {
-            return commitList.map(({ commit }) => ({
+            return commitList.map(({ commit, author }) => ({
                 message: commit.message,
-                author: commit.author.name,
-                date: commit.committer.date
+                author: author.name,
+                date: commit.committer.date,
+                url: commit.url,
             }));
         }
         return "nothing found";
     } catch (e) {
-        console.error("ErROR, ", e);
+        console.error("ErRoRRR, ", e);
     }
 }
 
 const getEvents = (events) => {
+
     if (events.length > 0) {
         return events.map((event) =>  ({
             type: event.type,
@@ -97,50 +97,33 @@ const getEvents = (events) => {
 
 const getUserStats = async (user) => {
 
-        /**
-         * 
-         *     
-         * // Signature addUserInfoToCache('user':user, 'url': []);
-         * // ====>>>> getUniqueUrls(user)
-         * // ====>>>> getCommitsFromUserRepo ===>>> await fetch (toUSerUrl) return 
-         * 
-         * return 
-         * 
-         * {'user': user,
-         *   'events': [Event, Event, Event]
-             'repos': [url, url, url],
-             'commits': { commits: <number> to repo: <repo>name}
-            }
-         */
-
         const checkedUser = checkUser(user);
 
-
         const response = await fetch(`https://api.github.com/users/${user}/events`);
+
+        if (!response.ok) {
+            console.error(`GitHub API error. Response status ${response.status}. ${response.statusText}`);
+
+            return;
+         }
+
         const result = await response.json();
-
-        const latestEvents = getEvents(result);        
-        console.log(latestEvents);
+    
+        const latestEvents = getEvents(result);
         
-
-        
-        const latestCommits = await getLatestCommits(result[0]);
-        console.log(latestCommits);
-
-               
         const repoUrls = getRepoUrls(result);
 
         if (repoUrls.length === 0) {
             process.stdout.write("No recent repo urls for this user \n");
-            return;
+        return;
         }
 
-        console.log(repoUrls);
-    /*    
-        const processed = parseResult(uniqueOnly);
-        console.log(processed);
-    */
-    //  return processed;
+        const commits = await Promise.all(
+            repoUrls.map(url => getLatestCommits(url))
+        );
+
+        console.log(commits);
+
 };
 
 const startApp = () => {
