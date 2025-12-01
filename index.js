@@ -72,7 +72,7 @@ const getLatestCommits = async (url) => {
         if (commitList) {
             return commitList.map(({ commit, author }) => ({
                 message: commit.message,
-                author: author.name,
+                author: author.login,
                 date: commit.committer.date,
                 url: commit.url,
             }));
@@ -110,27 +110,43 @@ const getUserStats = async (user) => {
         const result = await response.json();
     
         const latestEvents = getEvents(result);
-        
+
         const repoUrls = getRepoUrls(result);
 
         if (repoUrls.length === 0) {
             process.stdout.write("No recent repo urls for this user \n");
-        return;
+            return;
         }
 
         const commits = await Promise.all(
             repoUrls.map(url => getLatestCommits(url))
         );
 
-        console.log(commits);
+        return commits;
 
-};
+    };
+
+const parseInfo = (info) => {
+    console.log("INFO ", info);
+    
+}
 
 const startApp = () => {
     process.stdin.on("data", async (data) => {
+     
+        // parse results readable!
+        // refactor 
+
         process.stdin.setEncoding("utf-8");
-        if (data.length > 0) {
-            const info = await getUserStats(data);
+        const input = data.toString().toLowerCase().trim();
+        if (input.length > 0) {
+            if (input === "exit") {
+                process.stdout.write("see you next time!\n");
+                process.exit();
+            } else {
+                const info = await getUserStats(input);
+                const parsedInfo = parseInfo(info);
+            }
         }
     });
 };
