@@ -160,7 +160,7 @@ const startApp = () => {
             } else {
                 const userInfo = await getUserStats(input);
                 const parsedUserInfo = parseEvents(userInfo);
-                console.log(parsedUserInfo);
+                parsedUserInfo.forEach(line => process.stdout.write(line + '\n'));
             }
         }
     });
