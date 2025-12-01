@@ -57,7 +57,7 @@ const parseEvents = (latestEvents) => {
             switch (type) {
                 case "CreateEvent":
                     if (payload.refType === "branch") {
-                        otherEvents.push(`Created a new branch ${payload.ref} in ${repo}`);
+                        otherEvents.push(`Created new branch: "${payload.ref}" in ${repo}`);
                     } else if (payload.refType === "tag") {
                         otherEvents.push(`Created a new tag ${payload.ref} in ${repo}`);
                     } else if (payload.refType === "repository") {
