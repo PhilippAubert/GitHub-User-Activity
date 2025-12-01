@@ -1,43 +1,3 @@
-//TODO: 
-
-// Add response status, add headers and so on to the fetch-api!
-
-// DESIRED OUTPUT: 
-
-/* 
-    Output:
-    - Pushed 3 commits to kamranahmedse/developer-roadmap
-    - Opened a new issue in kamranahmedse/developer-roadmap
-    - Starred kamran 
-    ....and so on
-*/
-
-// ALLOW PROMPT FOR DIFFERENT PARAMS! 
-
-// =>> What indicates the most recent activity?
-
-// IMPORTANT: Change timestamp to human readable!! 
-
-// ALLOW EXIT, SEARCH PARAMS AFTER ANY RETURNED ANSWER! 
-
-
-/// ABSOLUTES SAHNESTÜCK: 
-
-// iteriere durch die objects und suche jeden commit, nach und nach!!, dann zuordnen 
-
-// promise-chaining. oder caching, so dass es überschrieben werden kann. 
-
-
-// FÜR DIE FORMATIERUNG DER ANTWORT! 
-
-/* const parseResult  = (result) => {
-    commits.length; + repo.url,
-    stars.length + repo.url,
-    issues.length + repo.url,
-}; */
-
-const userCache = new Set();
-
 const getRepoUrls = (resultObject) => {
     if (!resultObject) {
         return "probably out of limit!";
@@ -51,7 +11,6 @@ const getRepoUrls = (resultObject) => {
     }
     return uniqueUrls;
 };
-
 
 const getEvents = (events) => {
     if (!events.length) {
